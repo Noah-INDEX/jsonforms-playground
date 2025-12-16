@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { TextFieldModule } from '@angular/cdk/text-field';
 
 import { JsonFormsModule } from '@jsonforms/angular';
@@ -15,13 +17,14 @@ import { JsonFormsAngularMaterialModule, angularMaterialRenderers } from '@jsonf
   standalone: true,
   imports: [
     CommonModule, FormsModule,
-    MatCardModule, MatFormFieldModule, MatInputModule, TextFieldModule,
+    MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, TextFieldModule,
     JsonFormsModule, JsonFormsAngularMaterialModule
   ],
   styles: [`
     .grid { height: 100vh; display: grid; gap: 12px; padding: 12px; box-sizing: border-box;
             grid-template-columns: 1fr 1fr 1.2fr; }
     mat-card { display: flex; flex-direction: column; min-width: 0; overflow: auto; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; margin-right: 8px; }
     .fill { width: 100%; flex: 1; }
     textarea { height: 100%; }
     .error { color: #c00; font-size: 12px; min-height: 1.2em; white-space: pre-wrap; }
@@ -48,7 +51,12 @@ import { JsonFormsAngularMaterialModule, angularMaterialRenderers } from '@jsonf
       </mat-card>
 
       <mat-card>
-        <mat-card-title>Live Vorschau</mat-card-title>
+        <div class="card-header">
+          <mat-card-title>Live Vorschau</mat-card-title>
+          <button mat-icon-button (click)="refreshPreview()" title="Formular zurücksetzen">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
 
         <jsonforms
           [data]="data"
@@ -106,5 +114,9 @@ export class App {
   onDataChange(event: any) {
     this.data = event.data || event;
     console.log('Data changed:', this.data);
+  }
+
+  refreshPreview() {
+    this.data = {};
   }
 }
