@@ -92,7 +92,6 @@ import { PlaceholderControl, placeholderControlTester } from './renderers/placeh
       min-width: 0;
     }
 
-    ::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; }
     ::ng-deep .mat-mdc-form-field-flex { height: 100%; }
     ::ng-deep .mat-mdc-form-field-infix { height: 100%; padding-top: 0; padding-bottom: 0; display: flex; min-width: 0; }
     
