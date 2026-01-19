@@ -162,7 +162,7 @@ import { JsonFormsAngularMaterialModule, angularMaterialRenderers } from '@jsonf
       <mat-card>
         <div class="card-header">
           <mat-card-title>Vorschau</mat-card-title>
-          <button mat-icon-button (click)="refreshPreview()" title="Reset">
+          <button mat-icon-button (click)="refreshPreview()" title="refresh preview">
             <mat-icon>refresh</mat-icon>
           </button>
         </div>
