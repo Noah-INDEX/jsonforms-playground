@@ -1,0 +1,20 @@
+<div class="radio-field">
+  <div class="radio-content">
+    <div class="radio-label" [id]="'radio-label-' + id">{{ label }}</div>
+    <mat-radio-group
+      [attr.aria-labelledby]="'radio-label-' + id"
+      [value]="data"
+      (change)="onChange($event)"
+      [disabled]="!enabled"
+    >
+      @for (option of options; track option.value) {
+        <mat-radio-button [value]="option.value" class="radio-option">
+          {{ option.label }}
+        </mat-radio-button>
+      }
+    </mat-radio-group>
+  </div>
+  @if (error) {
+    <div class="radio-error">{{ error }}</div>
+  }
+</div>

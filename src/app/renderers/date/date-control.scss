@@ -1,0 +1,16 @@
+ix-date-control {
+  display: flex;
+  flex-direction: row;
+}
+
+.date-control-renderer {
+  flex: 1 1 auto;
+}
+
+.no-panel-navigation .mat-calendar-period-button {
+  pointer-events: none;
+}
+
+.no-panel-navigation .mat-calendar-arrow {
+  display: none;
+}

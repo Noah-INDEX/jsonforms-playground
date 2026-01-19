@@ -1,0 +1,27 @@
+<mat-form-field
+  class="date-control-renderer"
+  [ngStyle]="{ display: hidden ? 'none' : '' }"
+>
+  <mat-label>{{ label }}</mat-label>
+  <input
+    matInput
+    (dateChange)="onChange($event)"
+    [id]="id"
+    [formControl]="form"
+    [matDatepicker]="datepicker"
+    (focus)="focused = true"
+    (focusout)="focused = false"
+  />
+  <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+  <mat-datepicker
+    #datepicker
+    (monthSelected)="monthSelected($event, datepicker)"
+    (yearSelected)="yearSelected($event, datepicker)"
+    [startView]="startView"
+    [panelClass]="panelClass"
+  ></mat-datepicker>
+  @if (shouldShowUnfocusedDescription() || focused) {
+    <mat-hint>{{ description }}</mat-hint>
+  }
+  <mat-error>{{ error }}</mat-error>
+</mat-form-field>

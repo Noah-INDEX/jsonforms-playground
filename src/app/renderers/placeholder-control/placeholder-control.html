@@ -1,0 +1,33 @@
+<mat-form-field [style.display]="hidden ? 'none' : ''">
+  <mat-label>{{ label }}</mat-label>
+
+  @if (inputType === 'textarea') {
+    <textarea
+      matInput
+      [id]="id"
+      [formControl]="form"
+      [placeholder]="placeholder"
+      [readonly]="!enabled"
+      (input)="onChange($event)"
+      (focus)="focused = true"
+      (blur)="focused = false"
+    ></textarea>
+  } @else {
+    <input
+      matInput
+      [type]="inputType"
+      [id]="id"
+      [formControl]="form"
+      [placeholder]="placeholder"
+      [readonly]="!enabled"
+      (input)="onChange($event)"
+      (focus)="focused = true"
+      (blur)="focused = false"
+    />
+  }
+
+  @if (shouldShowUnfocusedDescription() || focused) {
+    <mat-hint>{{ description }}</mat-hint>
+  }
+  <mat-error>{{ error }}</mat-error>
+</mat-form-field>

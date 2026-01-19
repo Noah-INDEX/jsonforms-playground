@@ -12,6 +12,10 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { JsonFormsModule } from '@jsonforms/angular';
 import { JsonFormsAngularMaterialModule, angularMaterialRenderers } from '@jsonforms/angular-material';
 
+import { DateControl, dateControlTester } from './renderers/date/date-control';
+import { EnumRadioControl, enumRadioControlTester } from './renderers/enum-radio-control/enum-radio-control';
+import { PlaceholderControl, placeholderControlTester } from './renderers/placeholder-control/placeholder-control';
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -186,7 +190,12 @@ import { JsonFormsAngularMaterialModule, angularMaterialRenderers } from '@jsonf
   `
 })
 export class App {
-  renderers = angularMaterialRenderers;
+  readonly renderers = [
+    ...angularMaterialRenderers,
+    { tester: placeholderControlTester, renderer: PlaceholderControl },
+    { tester: dateControlTester, renderer: DateControl },
+    { tester: enumRadioControlTester, renderer: EnumRadioControl },
+  ];
 
   schemaText = JSON.stringify({
     "type": "object",
