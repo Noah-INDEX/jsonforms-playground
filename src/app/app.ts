@@ -27,7 +27,6 @@ import {
   PlaceholderControl,
   placeholderControlTester,
 } from './renderers/placeholder-control/placeholder-control'
-import { first } from 'rxjs'
 
 @Component({
   selector: 'app-root',
@@ -292,6 +291,9 @@ export class App {
           'description': 'Ein Zeitfeld zur Auswahl einer Uhrzeit.',
           'default': 'time',
         },
+        'text': {
+          'type': 'string',
+        },
         'firstName': { 'type': 'string', 'minLength': 1 },
         'lastName': { 'type': 'string', 'description': 'Surname' },
         'age': { 'type': 'integer', 'minimum': 1, 'maximum': 120 },
@@ -301,6 +303,33 @@ export class App {
           'default': 'prefer not to say',
         },
         'otherGender': { 'type': 'string' },
+        'itemsArray': {
+          'type': 'array',
+          'minItems': 1,
+          'maxItems': 10,
+          'description': 'Beispiel-Array mit editierbaren Einträgen',
+          'default': [],
+          'items': {
+            'type': 'object',
+            'required': ['itemNameRequired'],
+            'properties': {
+              'itemNameRequired': {
+                'type': 'string',
+                'minLength': 1,
+                'description': 'Pflichtfeld pro Array-Item',
+              },
+              'itemCommentMulti': {
+                'type': 'string',
+                'description': 'Optionaler Kommentar',
+              },
+              'itemDate': {
+                'type': 'string',
+                'format': 'date',
+                'description': 'Optionales Datum',
+              },
+            },
+          },
+        },
       },
       'allOf': [
         {
@@ -334,6 +363,11 @@ export class App {
           },
         },
         {
+          'type': 'Control',
+          'scope': '#/properties/text',
+          'options': { 'placeholder': 'Geben Sie hier einen Text ein...' },
+        },
+        {
           'type': 'Group',
           'elements': [
             { 'type': 'Control', 'scope': '#/properties/firstName' },
@@ -359,6 +393,38 @@ export class App {
             },
           ],
           'label': 'Personal Information',
+        },
+        {
+          'type': 'Control',
+          'scope': '#/properties/itemsArray',
+          'label': 'Items (Array)',
+          'options': {
+            'showSortButtons': true,
+            'detail': {
+              'type': 'VerticalLayout',
+              'elements': [
+                {
+                  'type': 'Control',
+                  'scope': '#/properties/itemNameRequired',
+                  'label': 'Item Name (required)',
+                },
+                {
+                  'type': 'Control',
+                  'scope': '#/properties/itemCommentMulti',
+                  'label': 'Kommentar',
+                  'options': {
+                    'multi': true,
+                    'placeholder': 'Optionaler Kommentar...',
+                  },
+                },
+                {
+                  'type': 'Control',
+                  'scope': '#/properties/itemDate',
+                  'label': 'Datum',
+                },
+              ],
+            },
+          },
         },
         {
           'type': 'Label',
