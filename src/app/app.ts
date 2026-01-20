@@ -27,6 +27,7 @@ import {
   PlaceholderControl,
   placeholderControlTester,
 } from './renderers/placeholder-control/placeholder-control'
+import { first } from 'rxjs'
 
 @Component({
   selector: 'app-root',
@@ -225,7 +226,7 @@ import {
           >
             <textarea
               matInput
-              [(ngModel)]="uiText"
+              [(ngModel)]="uischemaText"
               (ngModelChange)="parseUi()"
             ></textarea>
           </mat-form-field>
@@ -244,7 +245,7 @@ import {
 
       <mat-card>
         <div class="card-header">
-          <mat-card-title>Vorschau</mat-card-title>
+          <mat-card-title>Preview</mat-card-title>
           <button
             mat-icon-button
             (click)="refreshPreview()"
@@ -283,8 +284,14 @@ export class App {
   schemaText = JSON.stringify(
     {
       'type': 'object',
-      'required': ['age'],
+      'required': ['age', 'firstName'],
       'properties': {
+        'time': {
+          'type': 'string',
+          'format': 'time',
+          'description': 'Ein Zeitfeld zur Auswahl einer Uhrzeit.',
+          'default': 'time',
+        },
         'firstName': { 'type': 'string', 'minLength': 1 },
         'lastName': { 'type': 'string', 'description': 'Surname' },
         'age': { 'type': 'integer', 'minimum': 1, 'maximum': 120 },
@@ -315,30 +322,47 @@ export class App {
     2,
   )
 
-  uiText = JSON.stringify(
+  uischemaText = JSON.stringify(
     {
       'type': 'VerticalLayout',
       'elements': [
-        { 'type': 'Control', 'scope': '#/properties/firstName' },
-        { 'type': 'Control', 'scope': '#/properties/lastName' },
-        { 'type': 'Control', 'scope': '#/properties/age', 'label': 'Age?' },
         {
           'type': 'Control',
-          'scope': '#/properties/gender',
-          'label': 'Gender',
+          'scope': '#/properties/time',
+          'options': {
+            'placeholder': 'hh:mm:ss.000Z',
+          },
         },
         {
-          'type': 'Control',
-          'scope': '#/properties/otherGender',
-          'rule': {
-            'effect': 'ENABLE',
-            'condition': {
+          'type': 'Group',
+          'elements': [
+            { 'type': 'Control', 'scope': '#/properties/firstName' },
+            { 'type': 'Control', 'scope': '#/properties/lastName' },
+            { 'type': 'Control', 'scope': '#/properties/age', 'label': 'Age?' },
+            {
+              'type': 'Control',
               'scope': '#/properties/gender',
-              'schema': {
-                'const': 'other',
+              'label': 'Gender',
+            },
+            {
+              'type': 'Control',
+              'scope': '#/properties/otherGender',
+              'rule': {
+                'effect': 'ENABLE',
+                'condition': {
+                  'scope': '#/properties/gender',
+                  'schema': {
+                    'const': 'other',
+                  },
+                },
               },
             },
-          },
+          ],
+          'label': 'Personal Information',
+        },
+        {
+          'type': 'Label',
+          'text': 'end of form',
         },
       ],
     },
@@ -347,7 +371,7 @@ export class App {
   )
 
   schema: any = JSON.parse(this.schemaText)
-  uischema: any = JSON.parse(this.uiText)
+  uischema: any = JSON.parse(this.uischemaText)
   data: any = {}
   schemaErr = ''
   uiErr = ''
@@ -465,7 +489,7 @@ export class App {
 
   parseUi() {
     try {
-      this.uischema = JSON.parse(this.uiText)
+      this.uischema = JSON.parse(this.uischemaText)
       this.uiErr = ''
     } catch (e: any) {
       this.uiErr = e?.message ?? String(e)
@@ -483,7 +507,10 @@ export class App {
 
   /**
    * Durchläuft das Schema und ersetzt spezielle Default-Werte.
-   * Z.B. "today" wird durch das aktuelle Datum ersetzt.
+   * Unterstützte dynamische Defaults:
+   * - "today" für date-Felder → YYYY-MM-DD
+   * - "time" für time-Felder → HH:MM:SS.sssZ
+   * - "timestamp" für date-time-Felder → ISO 8601 Timestamp
    */
   private preprocessSchemaDefaults(schema: any): any {
     // Deep Clone des Schemas, um das Original nicht zu mutieren
@@ -497,13 +524,31 @@ export class App {
         for (const key in obj.properties) {
           const prop = obj.properties[key]
 
-          // "today" für Datumsfelder durch aktuelles Datum ersetzen
+          // "today" für Datumsfelder durch aktuelles Datum ersetzen (YYYY-MM-DD)
           if (
             prop.type === 'string' &&
             prop.format === 'date' &&
             prop.default === 'today'
           ) {
             prop.default = new Date().toISOString().split('T')[0]
+          }
+
+          // "time" für Zeitfelder durch aktuelle Zeit ersetzen (HH:MM:SS.sssZ)
+          if (
+            prop.type === 'string' &&
+            prop.format === 'time' &&
+            prop.default === 'time'
+          ) {
+            prop.default = new Date().toISOString().split('T')[1]
+          }
+
+          // "timestamp" für DateTime-Felder durch aktuellen Timestamp ersetzen (ISO 8601)
+          if (
+            prop.type === 'string' &&
+            prop.format === 'date-time' &&
+            prop.default === 'timestamp'
+          ) {
+            prop.default = new Date().toISOString()
           }
 
           // Rekursiv in verschachtelte Objekte gehen
