@@ -348,7 +348,7 @@ export class App {
 
   schema: any = JSON.parse(this.schemaText)
   uischema: any = JSON.parse(this.uiText)
-  data: any = this.getFormDataWithDefaults(this.schema)
+  data: any = {}
   schemaErr = ''
   uiErr = ''
 
@@ -377,6 +377,9 @@ export class App {
       useDefaults: true, // Diese Option aktiviert das Setzen von Defaults
     })
     addFormats(this.ajvWithDefaults)
+
+    // Data mit Default-Werten beim Laden initialisieren
+    this.data = this.getFormDataWithDefaults(this.schema)
   }
 
   get gridCols() {
