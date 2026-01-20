@@ -1,0 +1,12 @@
+# Build outputs
+dist
+.angular
+coverage
+
+# Dependencies
+node_modules
+
+# Config files
+*.config.js
+*.config.mjs
+package-lock.json
